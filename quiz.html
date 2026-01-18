@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Knowledge Quiz - Moez Portfolio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #e53935;
+            --primary-dark: #b71c1c;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #ffe3e3, #fef4f4);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 2rem 0;
+        }
+
+        .quiz-container {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.1);
+            padding: 2.5rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo-mark {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .quiz-title {
+            font-size: 1.8rem;
+            color: #222;
+            margin-bottom: 0.5rem;
+        }
+
+        .quiz-subtitle {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .progress-bar {
+            background-color: var(--primary);
+        }
+
+        .question-card {
+            background: #f9f9f9;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .question-number {
+            font-size: 0.85rem;
+            color: #ff9800;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #222;
+            margin-bottom: 1.5rem;
+        }
+
+        .answer-option {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            margin-bottom: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .answer-option:hover {
+            border-color: var(--primary);
+            background: #fff7f7;
+        }
+
+        .answer-option.selected {
+            border-color: var(--primary);
+            background: #fff0f0;
+        }
+
+        .answer-option.correct {
+            border-color: #4caf50;
+            background: #e8f5e9;
+        }
+
+        .answer-option.incorrect {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+
+        .option-letter {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .answer-option.selected .option-letter {
+            background: var(--primary);
+            color: white;
+        }
+
+        .answer-option.correct .option-letter {
+            background: #4caf50;
+            color: white;
+        }
+
+        .answer-option.incorrect .option-letter {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            border-color: var(--primary);
+            font-weight: 600;
+            border-radius: 50px;
+            padding: 0.85rem 2rem;
+            box-shadow: 0 10px 25px rgba(229, 57, 53, 0.35);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        .btn-outline-primary {
+            color: var(--primary);
+            border-color: var(--primary);
+            border-radius: 50px;
+            padding: 0.85rem 2rem;
+            font-weight: 600;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .result-card {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 2rem auto;
+            box-shadow: 0 15px 40px rgba(229, 57, 53, 0.3);
+        }
+
+        .score-text {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .result-message {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #222;
+            margin-bottom: 1rem;
+        }
+
+        .result-detail {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-box {
+            background: #f9f9f9;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .stat-box.correct {
+            border-color: #4caf50;
+            background: #e8f5e9;
+        }
+
+        .stat-box.incorrect {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #222;
+        }
+
+        .stat-percentage {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-top: 0.3rem;
+        }
+
+        .disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="quiz-container">
+            <div class="quiz-header">
+                <div class="logo-mark">G</div>
+                <h1 class="quiz-title">History Quiz Challenge</h1>
+                <p class="quiz-subtitle">30 questions covering Muslim & World History!</p>
+            </div>
+
+            <div class="progress mb-4" style="height: 8px; border-radius: 10px;">
+                <div class="progress-bar" role="progressbar" id="progressBar" style="width: 0%"></div>
+            </div>
+
+            <div id="quizContent">
+                <!-- Quiz questions will be loaded here -->
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <a href="index.html" class="btn btn-outline-primary">← Back to Portfolio</a>
+                <button id="nextBtn" class="btn btn-primary" style="display: none;">Next Question</button>
+                <button id="submitBtn" class="btn btn-primary" style="display: none;">Submit Quiz</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                question: "When was JavaScript founded?",
+                options: ["1993", "1995", "1997", "2000"],
+                correct: 1
+            },
+            {
+                question: "When did YouTube start?",
+                options: ["2003", "2004", "2005", "2006"],
+                correct: 2
+            },
+            {
+                question: "When did the Ottoman Empire start and who founded it?",
+                options: ["1299 - Osman I", "1453 - Mehmed II", "1520 - Suleiman I", "1326 - Orhan I"],
+                correct: 0
+            },
+            {
+                question: "Who conquered Constantinople in 1453?",
+                options: ["Suleiman the Magnificent", "Mehmed II", "Selim I", "Bayezid I"],
+                correct: 1
+            },
+            {
+                question: "When did Muslims conquer Mecca (Makkah)?",
+                options: ["622 CE", "624 CE", "628 CE", "630 CE"],
+                correct: 3
+            },
+            {
+                question: "Who was the first Sahabi (companion) to lead after Prophet Muhammad ﷺ?",
+                options: ["Umar ibn al-Khattab", "Abu Bakr al-Siddiq", "Uthman ibn Affan", "Ali ibn Abi Talib"],
+                correct: 1
+            },
+            {
+                question: "Who is called Al-Faruq?",
+                options: ["Abu Bakr al-Siddiq", "Umar ibn al-Khattab", "Uthman ibn Affan", "Khalid ibn al-Walid"],
+                correct: 1
+            },
+            {
+                question: "What year did the Hijrah (migration to Medina) occur?",
+                options: ["610 CE", "615 CE", "622 CE", "630 CE"],
+                correct: 2
+            },
+            {
+                question: "Who was known as 'Sayf Allah' (Sword of Allah)?",
+                options: ["Ali ibn Abi Talib", "Khalid ibn al-Walid", "Umar ibn al-Khattab", "Hamza ibn Abdul-Muttalib"],
+                correct: 1
+            },
+            {
+                question: "Which battle is considered the first major battle in Islamic history?",
+                options: ["Battle of Uhud", "Battle of Badr", "Battle of Khandaq", "Battle of Hunayn"],
+                correct: 1
+            },
+            {
+                question: "Who was the third Caliph of Islam?",
+                options: ["Abu Bakr", "Umar", "Uthman ibn Affan", "Ali"],
+                correct: 2
+            },
+            {
+                question: "During which Caliphate did the Islamic Golden Age peak?",
+                options: ["Rashidun Caliphate", "Umayyad Caliphate", "Abbasid Caliphate", "Ottoman Caliphate"],
+                correct: 2
+            },
+            {
+                question: "Who founded the Abbasid Caliphate?",
+                options: ["Abu al-Abbas al-Saffah", "Harun al-Rashid", "Al-Mansur", "Al-Ma'mun"],
+                correct: 0
+            },
+            {
+                question: "In which city was the House of Wisdom (Bayt al-Hikmah) located?",
+                options: ["Damascus", "Cairo", "Baghdad", "Cordoba"],
+                correct: 2
+            },
+            {
+                question: "Who was Salah ad-Din (Saladin)?",
+                options: ["Ottoman Sultan", "Founder of Ayyubid dynasty who recaptured Jerusalem", "Abbasid Caliph", "Umayyad general"],
+                correct: 1
+            },
+            {
+                question: "When did Hitler take leadership of Germany?",
+                options: ["1930", "1933", "1936", "1939"],
+                correct: 1
+            },
+            {
+                question: "What year did World War II end?",
+                options: ["1943", "1944", "1945", "1946"],
+                correct: 2
+            },
+            {
+                question: "Who was the first Roman Emperor?",
+                options: ["Julius Caesar", "Augustus", "Nero", "Tiberius"],
+                correct: 1
+            },
+            {
+                question: "When did the Roman Empire fall (Western)?",
+                options: ["410 CE", "455 CE", "476 CE", "493 CE"],
+                correct: 2
+            },
+            {
+                question: "Who was the Macedonian king who created one of the largest empires?",
+                options: ["Philip II", "Alexander the Great", "Darius III", "Cyrus the Great"],
+                correct: 1
+            },
+            {
+                question: "When did the Crusades begin?",
+                options: ["1066", "1095", "1099", "1187"],
+                correct: 1
+            },
+            {
+                question: "Who invented the printing press around 1440?",
+                options: ["Leonardo da Vinci", "Johannes Gutenberg", "Galileo Galilei", "Isaac Newton"],
+                correct: 1
+            },
+            {
+                question: "When did Christopher Columbus reach the Americas?",
+                options: ["1488", "1492", "1498", "1502"],
+                correct: 1
+            },
+            {
+                question: "The Magna Carta was signed in which year?",
+                options: ["1215", "1315", "1415", "1515"],
+                correct: 0
+            },
+            {
+                question: "When did World War I begin?",
+                options: ["1912", "1914", "1916", "1918"],
+                correct: 1
+            },
+            {
+                question: "Which country was the first to use atomic weapons in warfare?",
+                options: ["Germany", "Soviet Union", "United Kingdom", "United States"],
+                correct: 3
+            },
+            {
+                question: "When did the Berlin Wall fall?",
+                options: ["1987", "1989", "1991", "1993"],
+                correct: 1
+            },
+            {
+                question: "Who was the first president of the United States?",
+                options: ["Thomas Jefferson", "John Adams", "George Washington", "Benjamin Franklin"],
+                correct: 2
+            },
+            {
+                question: "The French Revolution began in which year?",
+                options: ["1776", "1789", "1799", "1804"],
+                correct: 1
+            },
+            {
+                question: "When did the Soviet Union dissolve?",
+                options: ["1989", "1990", "1991", "1992"],
+                correct: 2
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let userAnswers = [];
+
+        const quizContent = document.getElementById('quizContent');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const progressBar = document.getElementById('progressBar');
+
+        function loadQuestion() {
+            const question = quizData[currentQuestion];
+            const optionLetters = ['A', 'B', 'C', 'D'];
+            
+            const questionHTML = `
+                <div class="question-card">
+                    <div class="question-number">Question ${currentQuestion + 1} of ${quizData.length}</div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options">
+                        ${question.options.map((option, index) => `
+                            <div class="answer-option" data-index="${index}">
+                                <div class="option-letter">${optionLetters[index]}</div>
+                                <div>${option}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            quizContent.innerHTML = questionHTML;
+            
+            const progress = ((currentQuestion + 1) / quizData.length) * 100;
+            progressBar.style.width = progress + '%';
+            
+            document.querySelectorAll('.answer-option').forEach(option => {
+                option.addEventListener('click', selectAnswer);
+            });
+        }
+
+        function selectAnswer(e) {
+            const selectedOption = e.currentTarget;
+            const selectedIndex = parseInt(selectedOption.dataset.index);
+            
+            document.querySelectorAll('.answer-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            selectedOption.classList.add('selected');
+            
+            userAnswers[currentQuestion] = selectedIndex;
+            
+            if (currentQuestion < quizData.length - 1) {
+                nextBtn.style.display = 'block';
+                submitBtn.style.display = 'none';
+            } else {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'block';
+            }
+        }
+
+        function showResults() {
+            document.querySelectorAll('.answer-option').forEach(option => {
+                option.classList.add('disabled');
+                const index = parseInt(option.dataset.index);
+                if (index === quizData[currentQuestion].correct) {
+                    option.classList.add('correct');
+                } else if (index === userAnswers[currentQuestion]) {
+                    option.classList.add('incorrect');
+                }
+            });
+        }
+
+        function nextQuestion() {
+            showResults();
+            
+            if (userAnswers[currentQuestion] === quizData[currentQuestion].correct) {
+                score++;
+            }
+            
+            setTimeout(() => {
+                currentQuestion++;
+                nextBtn.style.display = 'none';
+                loadQuestion();
+            }, 1500);
+        }
+
+        function submitQuiz() {
+            showResults();
+            
+            if (userAnswers[currentQuestion] === quizData[currentQuestion].correct) {
+                score++;
+            }
+            
+            setTimeout(() => {
+                showFinalResults();
+            }, 1500);
+        }
+
+        function showFinalResults() {
+            const wrongAnswers = quizData.length - score;
+            const correctPercentage = Math.round((score / quizData.length) * 100);
+            const wrongPercentage = Math.round((wrongAnswers / quizData.length) * 100);
+            
+            let message = '';
+            
+            if (correctPercentage >= 90) {
+                message = 'Outstanding! 🏆';
+            } else if (correctPercentage >= 80) {
+                message = 'Excellent! 🎉';
+            } else if (correctPercentage >= 70) {
+                message = 'Great Job! 👏';
+            } else if (correctPercentage >= 60) {
+                message = 'Good Effort! 👍';
+            } else if (correctPercentage >= 50) {
+                message = 'Keep Practicing! 📚';
+            } else {
+                message = 'Keep Learning! 💪';
+            }
+            
+            const resultHTML = `
+                <div class="result-card">
+                    <div class="result-message">${message}</div>
+                    <div class="score-circle">
+                        <div class="score-text">${score}/${quizData.length}</div>
+                    </div>
+                    <div class="result-detail">
+                        You scored ${correctPercentage}% on this quiz!
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-box correct">
+                            <div class="stat-label">Correct Answers</div>
+                            <div class="stat-value">${score}</div>
+                            <div class="stat-percentage">${correctPercentage}%</div>
+                        </div>
+                        <div class="stat-box incorrect">
+                            <div class="stat-label">Wrong Answers</div>
+                            <div class="stat-value">${wrongAnswers}</div>
+                            <div class="stat-percentage">${wrongPercentage}%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex gap-2 justify-content-center flex-wrap">
+                        <button class="btn btn-primary" onclick="location.reload()">Try Again</button>
+                        <a href="index.html" class="btn btn-outline-primary">Back to Portfolio</a>
+                    </div>
+                </div>
+            `;
+            
+            quizContent.innerHTML = resultHTML;
+            nextBtn.style.display = 'none';
+            submitBtn.style.display = 'none';
+            document.querySelector('.d-flex.justify-content-between').style.display = 'none';
+        }
+
+        nextBtn.addEventListener('click', nextQuestion);
+        submitBtn.addEventListener('click', submitQuiz);
+
+        loadQuestion();
+    </script>
+</body>
+</html>
